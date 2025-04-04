@@ -1,8 +1,8 @@
 ## Interface: 30300
-## Title: Portrait Selector
+## Title: Portrait Selector v0.1.0
 ## Notes: Interface de sélection de portrait
 ## Author: Matthieu Albertelli
-## Version: 0.1
+## Version: 0.1.0
 ## SavedVariables: CustomPortraitDB
 
 TrueRP_PortraitSelector.lua
