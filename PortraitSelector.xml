@@ -71,6 +71,24 @@
 					<Frame name="PortraitSelectorGallery" setAllPoints="true" />
 				</ScrollChild>
 			</ScrollFrame>
+			<Frame name="PortraitPreviewFrame">
+				<Size>
+					<AbsDimension x="128" y="160" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="PortraitSelectorScrollFrame" relativePoint="TOPRIGHT">
+						<Offset x="40" y="0" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="PortraitPreviewTexture" setAllPoints="true" />
+					</Layer>
+				</Layers>
+				<Backdrop bgFile="Interface\\DialogFrame\\UI-DialogBox-Background" edgeFile="Interface\\Tooltips\\UI-Tooltip-Border" tile="true" tileSize="16" edgeSize="16">
+					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
+				</Backdrop>
+			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>

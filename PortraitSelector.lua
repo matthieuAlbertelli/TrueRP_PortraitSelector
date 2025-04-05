@@ -182,6 +182,7 @@ function PortraitSelector_UpdateGallery()
         btn:SetScript("OnClick", function()
             selectedPortrait = texturePath
             print("✅ Sélection :", texturePath)
+            PortraitPreviewTexture:SetTexture(texturePath)
         end)
         -- end
         btn:Show()
