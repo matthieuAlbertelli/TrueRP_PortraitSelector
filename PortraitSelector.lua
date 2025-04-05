@@ -15,16 +15,50 @@ local selectedRace = nil
 local selectedClass = nil
 local selectedPortrait = nil
 
+local numPortraits = 100
+local portraitsPerRow = 5
+local rowHeight = 70
+local maxRow = math.ceil(numPortraits / portraitsPerRow)
+
 SLASH_PORTRAITSELECT1 = "/portrait"
 SlashCmdList["PORTRAITSELECT"] = function()
     PortraitSelectorFrame:Show()
 end
 
-function PortraitSelector_OnLoad(self)
-    SaveButton:SetText("Sauvegarder")
+local function PortraitSelector_Empty(startIndex, endIndex)
+    for i = startIndex, endIndex do
+        local btn = _G["PortraitButton" .. i]
+        btn:Hide()
+    end
+end
 
+
+local function PortraitSelector_InitSelector()
+    for i = 1, numPortraits do
+        local btn = _G["PortraitButton" .. i]
+        -- local texturePath = basePath .. "\\portrait_" .. i .. ".tga"
+        local row = math.floor((i - 1) / portraitsPerRow)
+        local col = (i - 1) % portraitsPerRow
+
+        btn = CreateFrame("Button", "PortraitButton" .. i, PortraitSelectorGallery)
+        btn.texture = btn:CreateTexture(nil, "BACKGROUND")
+        btn:SetSize(64, 64)
+        btn.texture:SetAllPoints()
+        btn:SetPoint("TOPLEFT", PortraitSelectorGallery, "TOPLEFT", 10 + col * 70, -10 - row * rowHeight)
+        btn:EnableMouse(true)
+        btn:RegisterForClicks("AnyUp")
+        -- btn:SetScript("OnClick", function()
+        --     selectedPortrait = texturePath
+        --     print("✅ Sélection :", texturePath)
+        -- end)
+        btn:Hide()
+    end
+end
+
+function PortraitSelector_OnLoad(self)
     UIDropDownMenu_Initialize(RaceDropDown, PortraitSelector_InitRace)
     UIDropDownMenu_Initialize(ClassDropDown, PortraitSelector_InitClass)
+    SaveButton:SetText("Sauvegarder")
 
     PortraitSelectorScrollFrame:SetScrollChild(PortraitSelectorGallery)
     PortraitSelectorGallery:SetSize(360, 1000) -- hauteur > hauteur scroll visible
@@ -55,6 +89,8 @@ function PortraitSelector_OnLoad(self)
         ["Shaman"] = "Chaman",
         ["Mage"] = "Mage"
     }
+
+    PortraitSelector_InitSelector(40, 5)
 
     selectedRace = raceMap[race]
     selectedClass = classMap[classe]
@@ -94,21 +130,21 @@ function PortraitSelector_InitClass()
 end
 
 function PortraitSelector_UpdateGallery()
-    for i = 1, 100 do
-        local b = _G["PortraitButton" .. i]
-        if b then b:Hide() end
-    end
+    -- for i = 1, 100 do
+    --     local b = _G["PortraitButton" .. i]
+    --     if b then b:Hide() end
+    -- end
 
-    if not selectedRace or not selectedClass then return end
+    if not selectedRace or not selectedClass then
+        PortraitSelector_Empty(1, numPortraits)
+        return
+    end
 
     local basePath = "Interface\\AddOns\\TrueRP_PortraitSelector\\portraits\\" ..
         selectedRace:lower():gsub(" ", "_") .. "\\" ..
         selectedClass:lower():gsub(" ", "_")
 
-    local numPortraits = 100
-    local portraitsPerRow = 5
-    local rowHeight = 70
-    local maxRow = math.ceil(numPortraits / portraitsPerRow)
+
 
     PortraitSelectorGallery:SetHeight(maxRow * rowHeight)
 
@@ -116,13 +152,17 @@ function PortraitSelector_UpdateGallery()
         local btn = _G["PortraitButton" .. i]
         local texturePath = basePath .. "\\portrait_" .. i .. ".tga"
         -- Création d'un bouton de portrait
-        btn = CreateFrame("Button", "PortraitButton" .. i, PortraitSelectorGallery)
-        btn.texture = btn:CreateTexture(nil, "BACKGROUND")
+        -- btn = CreateFrame("Button", "PortraitButton" .. i, PortraitSelectorGallery)
+        -- btn.texture = btn:CreateTexture(nil, "BACKGROUND")
 
+
+        btn.texture:SetTexture(nil)
         btn.texture:SetTexture(texturePath)
-
+        print("path:" .. texturePath)
+        print("texture:" .. (btn.texture:GetTexture() or "introuvable"))
         -- Stoppe la recherche quand l'image suivante n'existe pas
         if not btn.texture:GetTexture(btn.texture) then
+            print(texturePath .. ' introuvable. Hide des suivants.')
             -- btn:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
             -- btn:SetBackdropColor(0, 1, 0, 0.3)
             while i <= numPortraits do
@@ -132,13 +172,13 @@ function PortraitSelector_UpdateGallery()
             return
         end
         -- if btn.texture then
-        local row = math.floor((i - 1) / portraitsPerRow)
-        local col = (i - 1) % portraitsPerRow
-        btn:SetSize(64, 64)
+        -- local row = math.floor((i - 1) / portraitsPerRow)
+        -- local col = (i - 1) % portraitsPerRow
+        -- btn:SetSize(64, 64)
         btn.texture:SetAllPoints()
-        btn:SetPoint("TOPLEFT", PortraitSelectorGallery, "TOPLEFT", 10 + col * 70, -10 - row * rowHeight)
-        btn:EnableMouse(true)
-        btn:RegisterForClicks("AnyUp")
+        -- btn:SetPoint("TOPLEFT", PortraitSelectorGallery, "TOPLEFT", 10 + col * 70, -10 - row * rowHeight)
+        -- btn:EnableMouse(true)
+        -- btn:RegisterForClicks("AnyUp")
         btn:SetScript("OnClick", function()
             selectedPortrait = texturePath
             print("✅ Sélection :", texturePath)
