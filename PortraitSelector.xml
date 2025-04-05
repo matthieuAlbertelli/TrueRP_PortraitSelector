@@ -16,7 +16,7 @@
 				</Size>
 				<Anchors>
 					<Anchor point="TOPRIGHT">
-						<Offset x="-20" y="-20" />
+						<Offset x="-50" y="-20" />
 					</Anchor>
 				</Anchors>
 				<Layers>
@@ -51,6 +51,13 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
+			<Button name="CloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="-5" y="-5" />
+					</Anchor>
+				</Anchors>
+			</Button>
 			<ScrollFrame name="PortraitSelectorScrollFrame" inherits="UIPanelScrollFrameTemplate">
 				<Size>
 					<AbsDimension x="360" y="180" />
