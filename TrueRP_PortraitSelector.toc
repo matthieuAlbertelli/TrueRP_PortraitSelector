@@ -1,9 +1,9 @@
 ## Interface: 30300
-## Title: Portrait Selector v0.1.0
-## Notes: Interface de sélection de portrait
-## Author: Matthieu Albertelli
-## Version: 0.1.0
+## Title: TrueRP Portrait Selector (Fixed)
+## Notes: Sélecteur de portraits révisé et fonctionnel
+## Author: ChatGPT
+## Version: 1.0
 ## SavedVariables: CustomPortraitDB
 
-TrueRP_PortraitSelector.lua
-TrueRP_PortraitSelector.xml
+PortraitSelector.lua
+PortraitSelector.xml
