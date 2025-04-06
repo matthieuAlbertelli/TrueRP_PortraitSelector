@@ -198,5 +198,16 @@ function PortraitSelector_Save()
         CustomPortraitDB[playerKey] = {
             portrait = selectedPortrait
         }
+
+        -- Envoi d'un message aux autres addons
+        local message = "UPDATE:" .. playerKey
+        if GetNumRaidMembers() > 0 then
+            SendAddonMessage("TRUERP_PORTRAIT", message, "RAID")
+        elseif GetNumPartyMembers() > 0 then
+            SendAddonMessage("TRUERP_PORTRAIT", message, "PARTY")
+        else
+            -- Envoi local (utile pour self-test sur le même client)
+            SendAddonMessage("TRUERP_PORTRAIT", message, "WHISPER", UnitName("player"))
+        end
     end
 end
