@@ -49,7 +49,7 @@ local function PortraitSelector_InitSelector()
         btn:RegisterForClicks("AnyUp")
         -- btn:SetScript("OnClick", function()
         --     selectedPortrait = texturePath
-        --     print("✅ Sélection :", texturePath)
+        --    -- print("✅ Sélection :", texturePath)
         -- end)
         btn:Hide()
     end
@@ -158,11 +158,11 @@ function PortraitSelector_UpdateGallery()
 
         btn.texture:SetTexture(nil)
         btn.texture:SetTexture(texturePath)
-        print("path:" .. texturePath)
-        print("texture:" .. (btn.texture:GetTexture() or "introuvable"))
+        -- print("path:" .. texturePath)
+        -- print("texture:" .. (btn.texture:GetTexture() or "introuvable"))
         -- Stoppe la recherche quand l'image suivante n'existe pas
         if not btn.texture:GetTexture(btn.texture) then
-            print(texturePath .. ' introuvable. Hide des suivants.')
+            -- print(texturePath .. ' introuvable. Hide des suivants.')
             -- btn:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
             -- btn:SetBackdropColor(0, 1, 0, 0.3)
             while i <= numPortraits do
@@ -181,7 +181,7 @@ function PortraitSelector_UpdateGallery()
         -- btn:RegisterForClicks("AnyUp")
         btn:SetScript("OnClick", function()
             selectedPortrait = texturePath
-            print("✅ Sélection :", texturePath)
+            -- print("✅ Sélection :", texturePath)
             PortraitPreviewTexture:SetTexture(texturePath)
         end)
         -- end
@@ -196,8 +196,8 @@ function PortraitSelector_Save()
             classe = selectedClass,
             portrait = selectedPortrait
         }
-        print("✅ Portrait sauvegardé :", selectedPortrait)
+        -- print("✅ Portrait sauvegardé :", selectedPortrait)
     else
-        print("❌ Aucun portrait sélectionné.")
+        -- print("❌ Aucun portrait sélectionné.")
     end
 end

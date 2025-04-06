@@ -1,5 +1,5 @@
 ## Interface: 30300
-## Title: TrueRP Portrait Selector (Fixed)
+## Title: TrueRP Portrait Selector
 ## Notes: Sélecteur de portraits révisé et fonctionnel
 ## Author: ChatGPT
 ## Version: 1.0
