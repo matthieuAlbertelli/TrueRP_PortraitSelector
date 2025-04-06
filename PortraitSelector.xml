@@ -10,33 +10,6 @@
 			<BackgroundInsets left="11" right="12" top="12" bottom="11" />
 		</Backdrop>
 		<Frames>
-			<Button name="SaveButton" inherits="UIPanelButtonTemplate">
-				<Size>
-					<AbsDimension x="100" y="25" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOPRIGHT">
-						<Offset x="-50" y="-20" />
-					</Anchor>
-				</Anchors>
-				<Layers>
-					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal">
-							<Anchors>
-								<Anchor point="CENTER" />
-							</Anchors>
-							<Text>
-								Sauvegarder
-							</Text>
-						</FontString>
-					</Layer>
-				</Layers>
-				<Scripts>
-					<OnClick>
-						PortraitSelector_Save()
-					</OnClick>
-				</Scripts>
-			</Button>
 			<Frame name="GenderDropDown" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -96,6 +69,33 @@
 					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
 				</Backdrop>
 			</Frame>
+			<Button name="SaveButton" inherits="UIPanelButtonTemplate">
+				<Size>
+					<AbsDimension x="100" y="25" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" relativeTo="PortraitPreviewFrame" relativePoint="BOTTOM">
+						<Offset x="0" y="0" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal">
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+							<Text>
+								Sauvegarder
+							</Text>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						PortraitSelector_Save()
+					</OnClick>
+				</Scripts>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad>
