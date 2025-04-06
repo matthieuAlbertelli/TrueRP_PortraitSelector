@@ -7,10 +7,10 @@ local races = {
 
 local classesByRace = {
     ["Elfe de sang"] = { "Paladin", "Démoniste", "Mage", "Chasseur", "Prêtre", "Voleur" },
-    ["Draeneï"] = { "Guerrier", "Paladin", "Prêtre", "Chasseur", "Chaman" },
+    ["Draeneï"] = { "Guerrier", "Paladin", "Prêtre", "Chasseur", "Chaman", "Mage" },
     ["Orc"] = { "Guerrier", "Chaman", "Chasseur", "Démoniste", "Voleur" },
     ["Humain"] = { "Paladin", "Guerrier", "Prêtre", "Voleur", "Mage", "Démoniste" },
-    ["Tauren"] = { "Guerrier", "Chaman", "Druide" },
+    ["Tauren"] = { "Guerrier", "Chaman", "Druide", "Chasseur" },
     ["Troll"] = { "Chasseur", "Prêtre", "Mage", "Voleur", "Chaman", "Guerrier" },
     ["Mort-vivant"] = { "Guerrier", "Prêtre", "Mage", "Voleur", "Démoniste" },
     ["Elfe de la nuit"] = { "Guerrier", "Prêtre", "Chasseur", "Voleur", "Druide" },
