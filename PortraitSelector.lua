@@ -150,7 +150,9 @@ function PortraitSelector_UpdateGallery()
 
     for i = 1, numPortraits do
         local btn = _G["PortraitButton" .. i]
+        -- local textureIndex = i
         local texturePath = basePath .. "\\portrait_" .. i .. ".tga"
+
         -- Création d'un bouton de portrait
         -- btn = CreateFrame("Button", "PortraitButton" .. i, PortraitSelectorGallery)
         -- btn.texture = btn:CreateTexture(nil, "BACKGROUND")
@@ -190,10 +192,9 @@ function PortraitSelector_UpdateGallery()
 end
 
 function PortraitSelector_Save()
+    local playerKey = UnitName("player")
     if selectedPortrait then
-        CustomPortraitDB[UnitGUID("player")] = {
-            race = selectedRace,
-            classe = selectedClass,
+        CustomPortraitDB[playerKey] = {
             portrait = selectedPortrait
         }
         -- print("✅ Portrait sauvegardé :", selectedPortrait)
