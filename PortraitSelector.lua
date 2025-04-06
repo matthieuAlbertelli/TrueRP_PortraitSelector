@@ -5,7 +5,7 @@ local races = {
 }
 
 local classesByRace = {
-    ["Elfe de sang"] = { "Paladin" },
+    ["Elfe de sang"] = { "Paladin", "Démoniste" },
     ["Draeneï"] = { "Guerrier" }
     -- ["Orc"] = { "Guerrier", "Chaman" },
     -- ["Humain"] = { "Paladin", "Mage" },
@@ -87,7 +87,9 @@ function PortraitSelector_OnLoad(self)
         ["Hunter"] = "Chasseur",
         ["Warrior"] = "Guerrier",
         ["Shaman"] = "Chaman",
-        ["Mage"] = "Mage"
+        ["Mage"] = "Mage",
+        ["Warlock"] = "Démoniste",
+
     }
 
     PortraitSelector_InitSelector(40, 5)
