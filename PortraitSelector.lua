@@ -1,16 +1,24 @@
 CustomPortraitDB = CustomPortraitDB or {}
 
+local genders = { "Homme", "Femme" }
 local races = {
-    "Elfe de sang", "Draeneï"
+    "Elfe de sang", "Draeneï", "Orc", "Humain", "Tauren", "Troll", "Mort-vivant", "Elfe de la nuit", "Nain", "Gnome"
 }
 
 local classesByRace = {
-    ["Elfe de sang"] = { "Paladin", "Démoniste" },
-    ["Draeneï"] = { "Guerrier" }
-    -- ["Orc"] = { "Guerrier", "Chaman" },
-    -- ["Humain"] = { "Paladin", "Mage" },
+    ["Elfe de sang"] = { "Paladin", "Démoniste", "Mage", "Chasseur", "Prêtre", "Voleur" },
+    ["Draeneï"] = { "Guerrier", "Paladin", "Prêtre", "Chasseur", "Chaman" },
+    ["Orc"] = { "Guerrier", "Chaman", "Chasseur", "Démoniste", "Voleur" },
+    ["Humain"] = { "Paladin", "Guerrier", "Prêtre", "Voleur", "Mage", "Démoniste" },
+    ["Tauren"] = { "Guerrier", "Chaman", "Druide" },
+    ["Troll"] = { "Chasseur", "Prêtre", "Mage", "Voleur", "Chaman", "Guerrier" },
+    ["Mort-vivant"] = { "Guerrier", "Prêtre", "Mage", "Voleur", "Démoniste" },
+    ["Elfe de la nuit"] = { "Guerrier", "Prêtre", "Chasseur", "Voleur", "Druide" },
+    ["Nain"] = { "Guerrier", "Paladin", "Chasseur", "Prêtre" },
+    ["Gnome"] = { "Guerrier", "Voleur", "Mage", "Démoniste" },
 }
 
+local selectedGender = nil
 local selectedRace = nil
 local selectedClass = nil
 local selectedPortrait = nil
@@ -32,74 +40,38 @@ local function PortraitSelector_Empty(startIndex, endIndex)
     end
 end
 
-
 local function PortraitSelector_InitSelector()
     for i = 1, numPortraits do
-        local btn = _G["PortraitButton" .. i]
-        -- local texturePath = basePath .. "\\portrait_" .. i .. ".tga"
-        local row = math.floor((i - 1) / portraitsPerRow)
-        local col = (i - 1) % portraitsPerRow
-
-        btn = CreateFrame("Button", "PortraitButton" .. i, PortraitSelectorGallery)
+        local btn = CreateFrame("Button", "PortraitButton" .. i, PortraitSelectorGallery)
         btn.texture = btn:CreateTexture(nil, "BACKGROUND")
         btn:SetSize(64, 64)
-        btn.texture:SetAllPoints()
+
+        local row = math.floor((i - 1) / portraitsPerRow)
+        local col = (i - 1) % portraitsPerRow
         btn:SetPoint("TOPLEFT", PortraitSelectorGallery, "TOPLEFT", 10 + col * 70, -10 - row * rowHeight)
+
+        btn.texture:SetAllPoints()
         btn:EnableMouse(true)
         btn:RegisterForClicks("AnyUp")
-        -- btn:SetScript("OnClick", function()
-        --     selectedPortrait = texturePath
-        --    -- print("✅ Sélection :", texturePath)
-        -- end)
         btn:Hide()
     end
 end
 
-function PortraitSelector_OnLoad(self)
-    UIDropDownMenu_Initialize(RaceDropDown, PortraitSelector_InitRace)
-    UIDropDownMenu_Initialize(ClassDropDown, PortraitSelector_InitClass)
-    SaveButton:SetText("Sauvegarder")
-
-    PortraitSelectorScrollFrame:SetScrollChild(PortraitSelectorGallery)
-    PortraitSelectorGallery:SetSize(360, 1000) -- hauteur > hauteur scroll visible
-    PortraitSelectorScrollFrame:SetVerticalScroll(0)
-    -- TESTS TMP
-    -- PortraitSelectorGallery:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
-    -- PortraitSelectorGallery:SetBackdropColor(1, 0, 0, 0.2)
-
-    -- local test = CreateFrame("Button", nil, PortraitSelectorGallery)
-    -- test:SetSize(64, 64)
-    -- test:SetPoint("TOPLEFT", 10, -700)
-    -- test:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
-    -- test:SetBackdropColor(0, 1, 0, 0.6)
-    -- test:EnableMouse(true)
-    -- test:RegisterForClicks("AnyUp")
-    -- test:SetScript("OnClick", function() print("✅ Clic test") end)
-
-    -- FIN TESTS TMP
-
-    local race, classe = UnitRace("player"), UnitClass("player")
-    local raceMap = {
-        ["Blood Elf"] = "Elfe de sang", ["Orc"] = "Orc", ["Human"] = "Humain"
-    }
-    local classMap = {
-        ["Paladin"] = "Paladin",
-        ["Hunter"] = "Chasseur",
-        ["Warrior"] = "Guerrier",
-        ["Shaman"] = "Chaman",
-        ["Mage"] = "Mage",
-        ["Warlock"] = "Démoniste",
-
-    }
-
-    PortraitSelector_InitSelector(40, 5)
-
-    selectedRace = raceMap[race]
-    selectedClass = classMap[classe]
-
-    UIDropDownMenu_SetText(RaceDropDown, selectedRace)
-    UIDropDownMenu_SetText(ClassDropDown, selectedClass)
-    PortraitSelector_UpdateGallery()
+function PortraitSelector_InitGender()
+    for _, gender in ipairs(genders) do
+        local info = UIDropDownMenu_CreateInfo()
+        info.text = gender
+        info.func = function()
+            selectedGender = gender
+            UIDropDownMenu_SetText(GenderDropDown, gender)
+            selectedRace = nil
+            selectedClass = nil
+            UIDropDownMenu_SetText(RaceDropDown, "")
+            UIDropDownMenu_SetText(ClassDropDown, "")
+            PortraitSelector_UpdateGallery()
+        end
+        UIDropDownMenu_AddButton(info)
+    end
 end
 
 function PortraitSelector_InitRace()
@@ -131,64 +103,91 @@ function PortraitSelector_InitClass()
     end
 end
 
-function PortraitSelector_UpdateGallery()
-    -- for i = 1, 100 do
-    --     local b = _G["PortraitButton" .. i]
-    --     if b then b:Hide() end
-    -- end
+function PortraitSelector_OnLoad(self)
+    UIDropDownMenu_Initialize(GenderDropDown, PortraitSelector_InitGender)
+    UIDropDownMenu_Initialize(RaceDropDown, PortraitSelector_InitRace)
+    UIDropDownMenu_Initialize(ClassDropDown, PortraitSelector_InitClass)
 
-    if not selectedRace or not selectedClass then
+    SaveButton:SetText("Sauvegarder")
+
+    PortraitSelectorScrollFrame:SetScrollChild(PortraitSelectorGallery)
+    PortraitSelectorGallery:SetSize(360, 1000)
+    PortraitSelectorScrollFrame:SetVerticalScroll(0)
+
+    PortraitSelector_InitSelector()
+
+    local race, classe = UnitRace("player"), UnitClass("player")
+    local sex = UnitSex("player") == 2 and "Homme" or "Femme"
+
+    local raceMap = {
+        ["Blood Elf"] = "Elfe de sang",
+        ["Orc"] = "Orc",
+        ["Human"] = "Humain",
+        ["Draenei"] = "Draeneï",
+        ["Night Elf"] = "Elfe de la nuit",
+        ["Tauren"] = "Tauren",
+        ["Gnome"] = "Gnome",
+        ["Troll"] = "Troll",
+        ["Undead"] = "Mort-vivant",
+        ["Dwarf"] = "Nain"
+    }
+
+    local classMap = {
+        ["Paladin"] = "Paladin",
+        ["Hunter"] = "Chasseur",
+        ["Warrior"] = "Guerrier",
+        ["Shaman"] = "Chaman",
+        ["Mage"] = "Mage",
+        ["Warlock"] = "Démoniste",
+        ["Rogue"] = "Voleur",
+        ["Priest"] = "Prêtre",
+        ["Druid"] = "Druide"
+    }
+
+    selectedGender = sex
+    selectedRace = raceMap[race]
+    selectedClass = classMap[classe]
+
+    UIDropDownMenu_SetText(GenderDropDown, selectedGender)
+    UIDropDownMenu_SetText(RaceDropDown, selectedRace)
+    UIDropDownMenu_SetText(ClassDropDown, selectedClass)
+
+    PortraitSelector_UpdateGallery()
+end
+
+function PortraitSelector_UpdateGallery()
+    if not selectedGender or not selectedRace or not selectedClass then
         PortraitSelector_Empty(1, numPortraits)
         return
     end
 
     local basePath = "Interface\\AddOns\\TrueRP_PortraitSelector\\portraits\\" ..
+        selectedGender:lower():gsub(" ", "_") .. "\\" ..
         selectedRace:lower():gsub(" ", "_") .. "\\" ..
         selectedClass:lower():gsub(" ", "_")
-
-
 
     PortraitSelectorGallery:SetHeight(maxRow * rowHeight)
 
     for i = 1, numPortraits do
         local btn = _G["PortraitButton" .. i]
-        -- local textureIndex = i
         local texturePath = basePath .. "\\portrait_" .. i .. ".tga"
-
-        -- Création d'un bouton de portrait
-        -- btn = CreateFrame("Button", "PortraitButton" .. i, PortraitSelectorGallery)
-        -- btn.texture = btn:CreateTexture(nil, "BACKGROUND")
-
 
         btn.texture:SetTexture(nil)
         btn.texture:SetTexture(texturePath)
-        -- print("path:" .. texturePath)
-        -- print("texture:" .. (btn.texture:GetTexture() or "introuvable"))
-        -- Stoppe la recherche quand l'image suivante n'existe pas
-        if not btn.texture:GetTexture(btn.texture) then
-            -- print(texturePath .. ' introuvable. Hide des suivants.')
-            -- btn:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8" })
-            -- btn:SetBackdropColor(0, 1, 0, 0.3)
+        btn.texture:SetAllPoints()
+
+        if not btn.texture:GetTexture() then
             while i <= numPortraits do
-                btn:Hide()
+                _G["PortraitButton" .. i]:Hide()
                 i = i + 1
             end
             return
         end
-        -- if btn.texture then
-        -- local row = math.floor((i - 1) / portraitsPerRow)
-        -- local col = (i - 1) % portraitsPerRow
-        -- btn:SetSize(64, 64)
-        btn.texture:SetAllPoints()
-        -- btn:SetPoint("TOPLEFT", PortraitSelectorGallery, "TOPLEFT", 10 + col * 70, -10 - row * rowHeight)
-        -- btn:EnableMouse(true)
-        -- btn:RegisterForClicks("AnyUp")
+
         btn:SetScript("OnClick", function()
             selectedPortrait = texturePath
-            -- print("✅ Sélection :", texturePath)
             PortraitPreviewTexture:SetTexture(texturePath)
         end)
-        -- end
         btn:Show()
     end
 end
@@ -199,8 +198,5 @@ function PortraitSelector_Save()
         CustomPortraitDB[playerKey] = {
             portrait = selectedPortrait
         }
-        -- print("✅ Portrait sauvegardé :", selectedPortrait)
-    else
-        -- print("❌ Aucun portrait sélectionné.")
     end
 end
