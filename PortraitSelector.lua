@@ -4,6 +4,7 @@
 -- - Pas de sauvegarde si aucun portrait sélectionné
 -- - Message d'info affiché pour les familiers partageant le même nom
 -- - Conservation de la structure CustomPortraitDB[NomDuJoueur].pets[NomDuPet]
+-- - Liste déroulante avec joueur + pets enregistrés, le pet invoqué apparaît en vert
 
 CustomPortraitDB = CustomPortraitDB or {}
 
@@ -112,17 +113,39 @@ function PortraitSelector_InitClass()
 end
 
 function PortraitSelector_InitTargetType()
-    local options = { "Joueur", "Familier" }
-    for _, target in ipairs(options) do
+    local playerName = UnitName("player")
+    local currentPet = UnitName("pet")
+    local pets = CustomPortraitDB[playerName] and CustomPortraitDB[playerName].pets or {}
+
+    -- Ajout du joueur
+    local info = UIDropDownMenu_CreateInfo()
+    info.text = playerName .. " (Joueur)"
+    info.func = function()
+        selectedTarget = "Joueur"
+        UIDropDownMenu_SetText(TargetTypeDropDown, playerName .. " (Joueur)")
+    end
+    UIDropDownMenu_AddButton(info)
+
+    -- Ajout des familiers
+    for petName in pairs(pets) do
         local info = UIDropDownMenu_CreateInfo()
-        info.text = target
+        info.text = petName
+        if currentPet and petName == currentPet then
+            info.text = "|cff00ff00" .. petName .. "|r"
+        end
         info.func = function()
-            selectedTarget = target
-            UIDropDownMenu_SetText(TargetTypeDropDown, target)
+            selectedTarget = "Familier"
+            UIDropDownMenu_SetText(TargetTypeDropDown, petName)
         end
         UIDropDownMenu_AddButton(info)
     end
-    UIDropDownMenu_SetText(TargetTypeDropDown, selectedTarget)
+
+    -- Valeur initiale
+    if selectedTarget == "Joueur" then
+        UIDropDownMenu_SetText(TargetTypeDropDown, playerName .. " (Joueur)")
+    elseif currentPet then
+        UIDropDownMenu_SetText(TargetTypeDropDown, currentPet)
+    end
 end
 
 function PortraitSelector_OnLoad(self)
@@ -223,17 +246,12 @@ function PortraitSelector_Save()
 
     if selectedTarget == "Joueur" then
         CustomPortraitDB[playerKey].portrait = selectedPortrait
-    elseif selectedTarget == "Familier" then
-        local petName = UnitName("pet")
-        if not petName then
-            UIErrorsFrame:AddMessage("Aucun familier invoqué.", 1.0, 0.2, 0.2)
-            return
-        end
+    else
+        local petName = selectedTarget
         CustomPortraitDB[playerKey].pets = CustomPortraitDB[playerKey].pets or {}
         CustomPortraitDB[playerKey].pets[petName] = selectedPortrait
     end
 
-    -- Envoi d'un message aux autres addons
     local message = "UPDATE:" .. playerKey
     if GetNumRaidMembers() > 0 then
         SendAddonMessage("TRUERP_PORTRAIT", message, "RAID")
