@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Frame name="PortraitSelectorFrame" hidden="true" parent="UIParent" movable="true" enableMouse="true" frameStrata="DIALOG">
 		<Size>
-			<AbsDimension x="600" y="300" />
+			<AbsDimension x="600" y="360" />
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -10,13 +10,23 @@
 			<BackgroundInsets left="11" right="12" top="12" bottom="11" />
 		</Backdrop>
 		<Frames>
-			<Frame name="GenderDropDown" inherits="UIDropDownMenuTemplate">
+			<!-- 🎯 Cible : Joueur / Familier -->
+			<Frame name="TargetTypeDropDown" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="20" y="-20" />
 					</Anchor>
 				</Anchors>
 			</Frame>
+			<!-- 🔻 Sexe -->
+			<Frame name="GenderDropDown" inherits="UIDropDownMenuTemplate">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="TargetTypeDropDown" relativePoint="RIGHT">
+						<Offset x="120" y="0" />
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<!-- 🔻 Race -->
 			<Frame name="RaceDropDown" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="GenderDropDown" relativePoint="RIGHT">
@@ -24,6 +34,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
+			<!-- 🔻 Classe -->
 			<Frame name="ClassDropDown" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="RaceDropDown" relativePoint="RIGHT">
@@ -31,6 +42,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
+			<!-- ❌ Fermer -->
 			<Button name="CloseButton" inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
@@ -38,6 +50,7 @@
 					</Anchor>
 				</Anchors>
 			</Button>
+			<!-- 🎨 Galerie de portraits -->
 			<ScrollFrame name="PortraitSelectorScrollFrame" inherits="UIPanelScrollFrameTemplate">
 				<Size>
 					<AbsDimension x="360" y="180" />
@@ -51,6 +64,7 @@
 					<Frame name="PortraitSelectorGallery" setAllPoints="true" />
 				</ScrollChild>
 			</ScrollFrame>
+			<!-- 🔍 Preview du portrait sélectionné -->
 			<Frame name="PortraitPreviewFrame">
 				<Size>
 					<AbsDimension x="128" y="160" />
@@ -69,6 +83,7 @@
 					<BackgroundInsets left="4" right="4" top="4" bottom="4" />
 				</Backdrop>
 			</Frame>
+			<!-- 💾 Bouton Sauvegarde -->
 			<Button name="SaveButton" inherits="UIPanelButtonTemplate">
 				<Size>
 					<AbsDimension x="100" y="25" />
@@ -96,6 +111,18 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+			<!-- 📝 Message d'information -->
+			<FontString name="PetNoticeText" inherits="GameFontHighlightSmall">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="PortraitSelectorScrollFrame" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-5" />
+					</Anchor>
+				</Anchors>
+				<Text>
+					Les familiers partageant le même nom auront le même portrait. Renommez vos familiers pour les différencier.
+				</Text>
+				<Color r="1.0" g="0.8" b="0.2" />
+			</FontString>
 		</Frames>
 		<Scripts>
 			<OnLoad>

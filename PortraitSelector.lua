@@ -1,3 +1,10 @@
+-- Cahier des charges appliqué :
+-- - Ajout d'une sélection de cible (joueur ou familier)
+-- - Si c'est un familier, enregistrement par nom réel du pet (UnitName("pet"))
+-- - Pas de sauvegarde si aucun portrait sélectionné
+-- - Message d'info affiché pour les familiers partageant le même nom
+-- - Conservation de la structure CustomPortraitDB[NomDuJoueur].pets[NomDuPet]
+
 CustomPortraitDB = CustomPortraitDB or {}
 
 local genders = { "Homme", "Femme" }
@@ -22,6 +29,7 @@ local selectedGender = nil
 local selectedRace = nil
 local selectedClass = nil
 local selectedPortrait = nil
+local selectedTarget = "Joueur"
 
 local numPortraits = 100
 local portraitsPerRow = 5
@@ -103,7 +111,22 @@ function PortraitSelector_InitClass()
     end
 end
 
+function PortraitSelector_InitTargetType()
+    local options = { "Joueur", "Familier" }
+    for _, target in ipairs(options) do
+        local info = UIDropDownMenu_CreateInfo()
+        info.text = target
+        info.func = function()
+            selectedTarget = target
+            UIDropDownMenu_SetText(TargetTypeDropDown, target)
+        end
+        UIDropDownMenu_AddButton(info)
+    end
+    UIDropDownMenu_SetText(TargetTypeDropDown, selectedTarget)
+end
+
 function PortraitSelector_OnLoad(self)
+    UIDropDownMenu_Initialize(TargetTypeDropDown, PortraitSelector_InitTargetType)
     UIDropDownMenu_Initialize(GenderDropDown, PortraitSelector_InitGender)
     UIDropDownMenu_Initialize(RaceDropDown, PortraitSelector_InitRace)
     UIDropDownMenu_Initialize(ClassDropDown, PortraitSelector_InitClass)
@@ -193,21 +216,30 @@ function PortraitSelector_UpdateGallery()
 end
 
 function PortraitSelector_Save()
-    local playerKey = UnitName("player")
-    if selectedPortrait then
-        CustomPortraitDB[playerKey] = {
-            portrait = selectedPortrait
-        }
+    if not selectedPortrait then return end
 
-        -- Envoi d'un message aux autres addons
-        local message = "UPDATE:" .. playerKey
-        if GetNumRaidMembers() > 0 then
-            SendAddonMessage("TRUERP_PORTRAIT", message, "RAID")
-        elseif GetNumPartyMembers() > 0 then
-            SendAddonMessage("TRUERP_PORTRAIT", message, "PARTY")
-        else
-            -- Envoi local (utile pour self-test sur le même client)
-            SendAddonMessage("TRUERP_PORTRAIT", message, "WHISPER", UnitName("player"))
+    local playerKey = UnitName("player")
+    CustomPortraitDB[playerKey] = CustomPortraitDB[playerKey] or {}
+
+    if selectedTarget == "Joueur" then
+        CustomPortraitDB[playerKey].portrait = selectedPortrait
+    elseif selectedTarget == "Familier" then
+        local petName = UnitName("pet")
+        if not petName then
+            UIErrorsFrame:AddMessage("Aucun familier invoqué.", 1.0, 0.2, 0.2)
+            return
         end
+        CustomPortraitDB[playerKey].pets = CustomPortraitDB[playerKey].pets or {}
+        CustomPortraitDB[playerKey].pets[petName] = selectedPortrait
+    end
+
+    -- Envoi d'un message aux autres addons
+    local message = "UPDATE:" .. playerKey
+    if GetNumRaidMembers() > 0 then
+        SendAddonMessage("TRUERP_PORTRAIT", message, "RAID")
+    elseif GetNumPartyMembers() > 0 then
+        SendAddonMessage("TRUERP_PORTRAIT", message, "PARTY")
+    else
+        SendAddonMessage("TRUERP_PORTRAIT", message, "WHISPER", UnitName("player"))
     end
 end
