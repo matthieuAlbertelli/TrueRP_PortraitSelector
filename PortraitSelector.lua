@@ -6,10 +6,12 @@
 -- - Conservation de la structure CustomPortraitDB[NomDuJoueur].pets[NomDuPet]
 -- - Liste déroulante avec joueur + pets enregistrés, le pet invoqué apparaît en vert
 -- - Liste déroulante rafraîchie à chaque ouverture de la fenêtre
+-- - Ajout du genre "Familier" : affichage dynamique de type et sous-type (creature type + family ou type de démon)
 
 CustomPortraitDB = CustomPortraitDB or {}
 
-local genders = { "Homme", "Femme" }
+local genders = { "Homme", "Femme", "Familier" }
+
 local races = {
     "Elfe de sang", "Draeneï", "Orc", "Humain", "Tauren", "Troll", "Mort-vivant", "Elfe de la nuit", "Nain", "Gnome"
 }
@@ -25,6 +27,19 @@ local classesByRace = {
     ["Elfe de la nuit"] = { "Guerrier", "Prêtre", "Chasseur", "Voleur", "Druide" },
     ["Nain"] = { "Guerrier", "Paladin", "Chasseur", "Prêtre" },
     ["Gnome"] = { "Guerrier", "Voleur", "Mage", "Démoniste" },
+}
+
+local demonTypes = {
+    "Diablotin",
+    "Marcheur du vide",
+    "Succube",
+    "Chasseur corrompu",
+    "Gangregarde"
+}
+
+local creatureTypes = {
+    "Démon",
+    "Bête"
 }
 
 local selectedGender = nil
@@ -86,6 +101,22 @@ function PortraitSelector_InitGender()
 end
 
 function PortraitSelector_InitRace()
+    UIDropDownMenu_ClearAll(RaceDropDown)
+    if selectedGender == "Familier" then
+        for _, creatureType in ipairs(creatureTypes) do
+            local info = UIDropDownMenu_CreateInfo()
+            info.text = creatureType
+            info.func = function()
+                selectedRace = creatureType
+                UIDropDownMenu_SetText(RaceDropDown, creatureType)
+                selectedClass = nil
+                UIDropDownMenu_SetText(ClassDropDown, "")
+                PortraitSelector_UpdateGallery()
+            end
+            UIDropDownMenu_AddButton(info)
+        end
+        return
+    end
     for _, race in ipairs(races) do
         local info = UIDropDownMenu_CreateInfo()
         info.text = race
@@ -101,6 +132,20 @@ function PortraitSelector_InitRace()
 end
 
 function PortraitSelector_InitClass()
+    UIDropDownMenu_ClearAll(ClassDropDown)
+    if selectedGender == "Familier" then
+        for _, demon in ipairs(demonTypes) do
+            local info = UIDropDownMenu_CreateInfo()
+            info.text = demon
+            info.func = function()
+                selectedClass = demon
+                UIDropDownMenu_SetText(ClassDropDown, demon)
+                PortraitSelector_UpdateGallery()
+            end
+            UIDropDownMenu_AddButton(info)
+        end
+        return
+    end
     if not selectedRace then return end
     for _, class in ipairs(classesByRace[selectedRace]) do
         local info = UIDropDownMenu_CreateInfo()
