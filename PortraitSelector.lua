@@ -164,6 +164,7 @@ function PortraitSelector_InitTargetType()
     local currentPet = UnitName("pet")
     local pets = CustomPortraitDB[playerName] and CustomPortraitDB[playerName].pets or {}
 
+    -- Ajout du joueur
     local info = UIDropDownMenu_CreateInfo()
     info.text = playerName .. " (Joueur)"
     info.func = function()
@@ -172,6 +173,8 @@ function PortraitSelector_InitTargetType()
     end
     UIDropDownMenu_AddButton(info)
 
+    -- Ajout des familiers enregistrés
+    local added = {}
     for petName in pairs(pets) do
         local info = UIDropDownMenu_CreateInfo()
         info.text = (currentPet and petName == currentPet) and "|cff00ff00" .. petName .. "|r" or petName
@@ -180,8 +183,21 @@ function PortraitSelector_InitTargetType()
             UIDropDownMenu_SetText(TargetTypeDropDown, petName)
         end
         UIDropDownMenu_AddButton(info)
+        added[petName] = true
     end
 
+    -- Ajout du familier invoqué s'il n'était pas encore enregistré
+    if currentPet and not added[currentPet] then
+        local info = UIDropDownMenu_CreateInfo()
+        info.text = "|cff00ff00" .. currentPet .. "|r"
+        info.func = function()
+            selectedTarget = currentPet
+            UIDropDownMenu_SetText(TargetTypeDropDown, currentPet)
+        end
+        UIDropDownMenu_AddButton(info)
+    end
+
+    -- Mise à jour de l'affichage sélectionné
     if selectedTarget == "Joueur" then
         UIDropDownMenu_SetText(TargetTypeDropDown, playerName .. " (Joueur)")
     elseif currentPet then
