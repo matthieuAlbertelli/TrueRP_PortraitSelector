@@ -5,6 +5,7 @@
 -- - Message d'info affiché pour les familiers partageant le même nom
 -- - Conservation de la structure CustomPortraitDB[NomDuJoueur].pets[NomDuPet]
 -- - Liste déroulante avec joueur + pets enregistrés, le pet invoqué apparaît en vert
+-- - Liste déroulante rafraîchie à chaque ouverture de la fenêtre
 
 CustomPortraitDB = CustomPortraitDB or {}
 
@@ -39,6 +40,7 @@ local maxRow = math.ceil(numPortraits / portraitsPerRow)
 
 SLASH_PORTRAITSELECT1 = "/portrait"
 SlashCmdList["PORTRAITSELECT"] = function()
+    UIDropDownMenu_Initialize(TargetTypeDropDown, PortraitSelector_InitTargetType)
     PortraitSelectorFrame:Show()
 end
 
@@ -117,7 +119,6 @@ function PortraitSelector_InitTargetType()
     local currentPet = UnitName("pet")
     local pets = CustomPortraitDB[playerName] and CustomPortraitDB[playerName].pets or {}
 
-    -- Ajout du joueur
     local info = UIDropDownMenu_CreateInfo()
     info.text = playerName .. " (Joueur)"
     info.func = function()
@@ -126,21 +127,16 @@ function PortraitSelector_InitTargetType()
     end
     UIDropDownMenu_AddButton(info)
 
-    -- Ajout des familiers
     for petName in pairs(pets) do
         local info = UIDropDownMenu_CreateInfo()
-        info.text = petName
-        if currentPet and petName == currentPet then
-            info.text = "|cff00ff00" .. petName .. "|r"
-        end
+        info.text = (currentPet and petName == currentPet) and "|cff00ff00" .. petName .. "|r" or petName
         info.func = function()
-            selectedTarget = "Familier"
+            selectedTarget = petName
             UIDropDownMenu_SetText(TargetTypeDropDown, petName)
         end
         UIDropDownMenu_AddButton(info)
     end
 
-    -- Valeur initiale
     if selectedTarget == "Joueur" then
         UIDropDownMenu_SetText(TargetTypeDropDown, playerName .. " (Joueur)")
     elseif currentPet then
