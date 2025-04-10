@@ -37,6 +37,10 @@ local demonTypes = {
     "Gangregarde"
 }
 
+local beastTypes = {
+    "Dracodard"
+}
+
 local creatureTypes = {
     "Démon",
     "Bête"
@@ -109,6 +113,8 @@ function PortraitSelector_InitRace()
             info.func = function()
                 selectedRace = creatureType
                 UIDropDownMenu_SetText(RaceDropDown, creatureType)
+                UIDropDownMenu_Initialize(ClassDropDown, PortraitSelector_InitClass)
+
                 selectedClass = nil
                 UIDropDownMenu_SetText(ClassDropDown, "")
                 PortraitSelector_UpdateGallery()
@@ -134,18 +140,33 @@ end
 function PortraitSelector_InitClass()
     UIDropDownMenu_ClearAll(ClassDropDown)
     if selectedGender == "Familier" then
-        for _, demon in ipairs(demonTypes) do
-            local info = UIDropDownMenu_CreateInfo()
-            info.text = demon
-            info.func = function()
-                selectedClass = demon
-                UIDropDownMenu_SetText(ClassDropDown, demon)
-                PortraitSelector_UpdateGallery()
+        if selectedRace == "Démon" then
+            for _, demon in ipairs(demonTypes) do
+                local info = UIDropDownMenu_CreateInfo()
+                info.text = demon
+                info.func = function()
+                    selectedClass = demon
+                    UIDropDownMenu_SetText(ClassDropDown, demon)
+                    PortraitSelector_UpdateGallery()
+                end
+                UIDropDownMenu_AddButton(info)
             end
-            UIDropDownMenu_AddButton(info)
+        elseif selectedRace == "Bête" then
+            for _, beast in ipairs(beastTypes) do
+                local info = UIDropDownMenu_CreateInfo()
+                info.text = beast
+                info.func = function()
+                    selectedClass = beast
+                    UIDropDownMenu_SetText(ClassDropDown, beast)
+                    PortraitSelector_UpdateGallery()
+                end
+                UIDropDownMenu_AddButton(info)
+            end
         end
         return
     end
+
+
     if not selectedRace then return end
     for _, class in ipairs(classesByRace[selectedRace]) do
         local info = UIDropDownMenu_CreateInfo()
