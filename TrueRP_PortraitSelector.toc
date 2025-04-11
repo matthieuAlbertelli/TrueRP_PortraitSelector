@@ -5,5 +5,10 @@
 ## Version: 1.0
 ## SavedVariables: CustomPortraitDB
 
-PortraitSelector.lua
-PortraitSelector.xml
+constants.lua
+state.lua
+dropdowns.lua
+gallery.lua
+save.lua
+main.lua
+ui.xml

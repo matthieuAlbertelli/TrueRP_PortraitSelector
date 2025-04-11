@@ -1,0 +1,60 @@
+CustomPortraitDB = CustomPortraitDB or {}
+
+SLASH_PORTRAITSELECT1 = "/portrait"
+SlashCmdList["PORTRAITSELECT"] = function()
+    UIDropDownMenu_Initialize(TargetTypeDropDown, PortraitSelector_InitTargetType)
+    PortraitSelectorFrame:Show()
+end
+
+function PortraitSelector_OnLoad(self)
+    UIDropDownMenu_Initialize(TargetTypeDropDown, PortraitSelector_InitTargetType)
+    UIDropDownMenu_Initialize(GenderDropDown, PortraitSelector_InitGender)
+    UIDropDownMenu_Initialize(RaceDropDown, PortraitSelector_InitRace)
+    UIDropDownMenu_Initialize(ClassDropDown, PortraitSelector_InitClass)
+
+    SaveButton:SetText("Sauvegarder")
+
+    PortraitSelectorScrollFrame:SetScrollChild(PortraitSelectorGallery)
+    PortraitSelectorGallery:SetSize(360, 1000)
+    PortraitSelectorScrollFrame:SetVerticalScroll(0)
+
+    PortraitSelector_InitSelector()
+
+    local race, classe = UnitRace("player"), UnitClass("player")
+    local sex = UnitSex("player") == 2 and "Homme" or "Femme"
+
+    local raceMap = {
+        ["Blood Elf"] = "Elfe de sang",
+        ["Orc"] = "Orc",
+        ["Human"] = "Humain",
+        ["Draenei"] = "Draeneï",
+        ["Night Elf"] = "Elfe de la nuit",
+        ["Tauren"] = "Tauren",
+        ["Gnome"] = "Gnome",
+        ["Troll"] = "Troll",
+        ["Undead"] = "Mort-vivant",
+        ["Dwarf"] = "Nain"
+    }
+
+    local classMap = {
+        ["Paladin"] = "Paladin",
+        ["Hunter"] = "Chasseur",
+        ["Warrior"] = "Guerrier",
+        ["Shaman"] = "Chaman",
+        ["Mage"] = "Mage",
+        ["Warlock"] = "Démoniste",
+        ["Rogue"] = "Voleur",
+        ["Priest"] = "Prêtre",
+        ["Druid"] = "Druide"
+    }
+
+    SelectedState.gender = sex
+    SelectedState.race = raceMap[race]
+    SelectedState.class = classMap[classe]
+
+    UIDropDownMenu_SetText(GenderDropDown, SelectedState.gender)
+    UIDropDownMenu_SetText(RaceDropDown, SelectedState.race)
+    UIDropDownMenu_SetText(ClassDropDown, SelectedState.class)
+
+    PortraitSelector_UpdateGallery()
+end
