@@ -1,21 +1,31 @@
 CustomPortraitDB = CustomPortraitDB or {}
 
--- Alias pour les sous-modules
+-- Aliases de modules
 local Dropdowns = TrueRP.PortraitSelector.Dropdowns
 local Gallery = TrueRP.PortraitSelector.Gallery
 local State = TrueRP.PortraitSelector.State
 
 SLASH_PORTRAITSELECT1 = "/portrait"
 SlashCmdList["PORTRAITSELECT"] = function()
-    UIDropDownMenu_Initialize(TargetTypeDropDown, Dropdowns.InitTargetType)
+    UIDropDownMenu_Initialize(TargetTypeDropDown, function(self)
+        Dropdowns.InitDropdown("target", self)
+    end)
     PortraitSelectorFrame:Show()
 end
 
 function PortraitSelector_OnLoad(self)
-    UIDropDownMenu_Initialize(TargetTypeDropDown, Dropdowns.InitTargetType)
-    UIDropDownMenu_Initialize(GenderDropDown, Dropdowns.InitGender)
-    UIDropDownMenu_Initialize(RaceDropDown, Dropdowns.InitRace)
-    UIDropDownMenu_Initialize(ClassDropDown, Dropdowns.InitClass)
+    UIDropDownMenu_Initialize(TargetTypeDropDown, function(self)
+        Dropdowns.InitDropdown("target", self)
+    end)
+    UIDropDownMenu_Initialize(GenderDropDown, function(self)
+        Dropdowns.InitDropdown("gender", self)
+    end)
+    UIDropDownMenu_Initialize(RaceDropDown, function(self)
+        Dropdowns.InitDropdown("race", self)
+    end)
+    UIDropDownMenu_Initialize(ClassDropDown, function(self)
+        Dropdowns.InitDropdown("class", self)
+    end)
 
     SaveButton:SetText("Sauvegarder")
 
