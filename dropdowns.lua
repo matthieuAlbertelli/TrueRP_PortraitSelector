@@ -73,7 +73,7 @@ end
 -- ===================== 🎛 CONFIG + DROPDOWNS ====================== --
 
 local DropdownConfigs = {
-    target = {
+    playerControlled = {
         getSource = function()
             local entries = {}
             local playerName = UnitName("player")
@@ -103,7 +103,7 @@ local DropdownConfigs = {
 
             return entries
         end,
-        stateKey = "target",
+        stateKey = "playerControlled",
         refreshGallery = false
     },
     gender = {

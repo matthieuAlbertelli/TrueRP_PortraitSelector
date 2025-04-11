@@ -8,14 +8,14 @@ local State = TrueRP.PortraitSelector.State
 SLASH_PORTRAITSELECT1 = "/portrait"
 SlashCmdList["PORTRAITSELECT"] = function()
     UIDropDownMenu_Initialize(TargetTypeDropDown, function(self)
-        Dropdowns.InitDropdown("target", self)
+        Dropdowns.InitDropdown("playerControlled", self)
     end)
     PortraitSelectorFrame:Show()
 end
 
 function PortraitSelector_OnLoad(self)
     UIDropDownMenu_Initialize(TargetTypeDropDown, function(self)
-        Dropdowns.InitDropdown("target", self)
+        Dropdowns.InitDropdown("playerControlled", self)
     end)
     UIDropDownMenu_Initialize(GenderDropDown, function(self)
         Dropdowns.InitDropdown("gender", self)
