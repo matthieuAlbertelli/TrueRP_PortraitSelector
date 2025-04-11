@@ -1,16 +1,21 @@
 CustomPortraitDB = CustomPortraitDB or {}
 
+-- Alias pour les sous-modules
+local Dropdowns = TrueRP.PortraitSelector.Dropdowns
+local Gallery = TrueRP.PortraitSelector.Gallery
+local State = TrueRP.PortraitSelector.State
+
 SLASH_PORTRAITSELECT1 = "/portrait"
 SlashCmdList["PORTRAITSELECT"] = function()
-    UIDropDownMenu_Initialize(TargetTypeDropDown, PortraitSelector_InitTargetType)
+    UIDropDownMenu_Initialize(TargetTypeDropDown, Dropdowns.InitTargetType)
     PortraitSelectorFrame:Show()
 end
 
 function PortraitSelector_OnLoad(self)
-    UIDropDownMenu_Initialize(TargetTypeDropDown, PortraitSelector_InitTargetType)
-    UIDropDownMenu_Initialize(GenderDropDown, PortraitSelector_InitGender)
-    UIDropDownMenu_Initialize(RaceDropDown, PortraitSelector_InitRace)
-    UIDropDownMenu_Initialize(ClassDropDown, PortraitSelector_InitClass)
+    UIDropDownMenu_Initialize(TargetTypeDropDown, Dropdowns.InitTargetType)
+    UIDropDownMenu_Initialize(GenderDropDown, Dropdowns.InitGender)
+    UIDropDownMenu_Initialize(RaceDropDown, Dropdowns.InitRace)
+    UIDropDownMenu_Initialize(ClassDropDown, Dropdowns.InitClass)
 
     SaveButton:SetText("Sauvegarder")
 
@@ -18,7 +23,7 @@ function PortraitSelector_OnLoad(self)
     PortraitSelectorGallery:SetSize(360, 1000)
     PortraitSelectorScrollFrame:SetVerticalScroll(0)
 
-    PortraitSelector_InitSelector()
+    Gallery.InitSelector()
 
     local race, classe = UnitRace("player"), UnitClass("player")
     local sex = UnitSex("player") == 2 and "Homme" or "Femme"
@@ -48,13 +53,13 @@ function PortraitSelector_OnLoad(self)
         ["Druid"] = "Druide"
     }
 
-    SelectedState.gender = sex
-    SelectedState.race = raceMap[race]
-    SelectedState.class = classMap[classe]
+    State.gender = sex
+    State.race = raceMap[race]
+    State.class = classMap[classe]
 
-    UIDropDownMenu_SetText(GenderDropDown, SelectedState.gender)
-    UIDropDownMenu_SetText(RaceDropDown, SelectedState.race)
-    UIDropDownMenu_SetText(ClassDropDown, SelectedState.class)
+    UIDropDownMenu_SetText(GenderDropDown, State.gender)
+    UIDropDownMenu_SetText(RaceDropDown, State.race)
+    UIDropDownMenu_SetText(ClassDropDown, State.class)
 
-    PortraitSelector_UpdateGallery()
+    Gallery.UpdateGallery()
 end

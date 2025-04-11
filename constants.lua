@@ -1,13 +1,15 @@
 -- constants.lua
 
-GENDERS = { "Homme", "Femme", "Familier" }
+local M = {}
 
-RACES = {
+M.GENDERS = { "Homme", "Femme", "Familier" }
+
+M.RACES = {
     "Elfe de sang", "Draeneï", "Orc", "Humain", "Tauren",
     "Troll", "Mort-vivant", "Elfe de la nuit", "Nain", "Gnome"
 }
 
-CLASSES_BY_RACE = {
+M.CLASSES_BY_RACE = {
     ["Elfe de sang"] = { "Paladin", "Démoniste", "Mage", "Chasseur", "Prêtre", "Voleur" },
     ["Draeneï"] = { "Guerrier", "Paladin", "Prêtre", "Chasseur", "Chaman", "Mage" },
     ["Orc"] = { "Guerrier", "Chaman", "Chasseur", "Démoniste", "Voleur" },
@@ -20,14 +22,19 @@ CLASSES_BY_RACE = {
     ["Gnome"] = { "Guerrier", "Voleur", "Mage", "Démoniste" },
 }
 
-DEMON_TYPES = {
+M.DEMON_TYPES = {
     "Diablotin", "Marcheur du vide", "Succube", "Chasseur corrompu", "Gangregarde"
 }
 
-BEAST_TYPES = {
+M.BEAST_TYPES = {
     "Dracodard"
 }
 
-CREATURE_TYPES = {
+M.CREATURE_TYPES = {
     "Démon", "Bête"
 }
+
+-- Injection dans l’espace TrueRP.PortraitSelector
+TrueRP = TrueRP or {}
+TrueRP.PortraitSelector = TrueRP.PortraitSelector or {}
+TrueRP.PortraitSelector.Constants = M

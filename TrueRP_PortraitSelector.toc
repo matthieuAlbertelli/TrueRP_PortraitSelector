@@ -7,8 +7,8 @@
 
 constants.lua
 state.lua
-dropdowns.lua
 gallery.lua
+dropdowns.lua
 save.lua
 main.lua
 ui.xml

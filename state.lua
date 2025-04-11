@@ -1,10 +1,13 @@
 -- state.lua
 
--- Variables d'état
-SelectedState = {
+local M = {
     gender = nil,
     race = nil,
     class = nil,
     portrait = nil,
-    target = "Joueur"
+    target = "Joueur",
 }
+
+TrueRP = TrueRP or {}
+TrueRP.PortraitSelector = TrueRP.PortraitSelector or {}
+TrueRP.PortraitSelector.State = M

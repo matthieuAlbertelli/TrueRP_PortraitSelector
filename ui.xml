@@ -107,7 +107,7 @@
 				</Layers>
 				<Scripts>
 					<OnClick>
-						PortraitSelector_Save()
+						TrueRP.PortraitSelector.Saver.Save()
 					</OnClick>
 				</Scripts>
 			</Button>

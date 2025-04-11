@@ -1,11 +1,15 @@
 -- gallery.lua
 
+local M = {}
+
+local State = TrueRP.PortraitSelector.State
+
 local numPortraits = 100
 local portraitsPerRow = 5
 local rowHeight = 70
 local maxRow = math.ceil(numPortraits / portraitsPerRow)
 
-function PortraitSelector_InitSelector()
+function M.InitSelector()
     for i = 1, numPortraits do
         local btn = CreateFrame("Button", "PortraitButton" .. i, PortraitSelectorGallery)
         btn.texture = btn:CreateTexture(nil, "BACKGROUND")
@@ -22,23 +26,23 @@ function PortraitSelector_InitSelector()
     end
 end
 
-function PortraitSelector_Empty(startIndex, endIndex)
+function M.Clear(startIndex, endIndex)
     for i = startIndex, endIndex do
         local btn = _G["PortraitButton" .. i]
         btn:Hide()
     end
 end
 
-function PortraitSelector_UpdateGallery()
-    if not SelectedState.gender or not SelectedState.race or not SelectedState.class then
-        PortraitSelector_Empty(1, numPortraits)
+function M.UpdateGallery()
+    if not State.gender or not State.race or not State.class then
+        M.Clear(1, numPortraits)
         return
     end
 
     local basePath = "Interface\\AddOns\\TrueRP_PortraitSelector\\portraits\\" ..
-        SelectedState.gender:lower():gsub(" ", "_") .. "\\" ..
-        SelectedState.race:lower():gsub(" ", "_") .. "\\" ..
-        SelectedState.class:lower():gsub(" ", "_")
+        State.gender:lower():gsub(" ", "_") .. "\\" ..
+        State.race:lower():gsub(" ", "_") .. "\\" ..
+        State.class:lower():gsub(" ", "_")
 
     PortraitSelectorGallery:SetHeight(maxRow * rowHeight)
 
@@ -59,9 +63,13 @@ function PortraitSelector_UpdateGallery()
         end
 
         btn:SetScript("OnClick", function()
-            SelectedState.portrait = texturePath
+            State.portrait = texturePath
             PortraitPreviewTexture:SetTexture(texturePath)
         end)
         btn:Show()
     end
 end
+
+TrueRP = TrueRP or {}
+TrueRP.PortraitSelector = TrueRP.PortraitSelector or {}
+TrueRP.PortraitSelector.Gallery = M
