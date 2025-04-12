@@ -1,30 +1,26 @@
 -- dropdowns.lua
+-- Module responsable de l'initialisation des dropdowns dynamiques :
+-- genre, race, classe et entité contrôlée par le joueur (joueur ou familier).
+-- Utilise une configuration déclarative pour gérer les comportements de sélection.
 
 local M = {}
 
-local Const = TrueRP.PortraitSelector.Constants
-local State = TrueRP.PortraitSelector.State
+local Configs = TrueRP.PortraitSelector.DropdownConfig
+local StateAccess = TrueRP.PortraitSelector.StateAccess
 local Gallery = TrueRP.PortraitSelector.Gallery
 
--- ===================== 🔧 UTILS ====================== --
-
-local function IsPet()
-    return State.gender == "Familier"
-end
-
-local function GetAvailableRaces()
-    return IsPet() and Const.CREATURE_TYPES or Const.RACES
-end
-
-local function GetAvailableClasses()
-    if IsPet() then
-        return State.race == "Démon" and Const.DEMON_TYPES
-            or State.race == "Bête" and Const.BEAST_TYPES
-            or {}
+--- Définit le texte d'un dropdown s'il existe
+-- @param frame table - Le dropdown à modifier
+-- @param text string - Le texte à afficher
+local function SetDropdownText(frame, text)
+    if frame and text then
+        UIDropDownMenu_SetText(frame, text)
     end
-    return Const.CLASSES_BY_RACE[State.race] or {}
 end
 
+--- Ajoute une entrée à un dropdown Blizz.
+-- @param text string - Le label à afficher
+-- @param onClick function - La fonction à appeler lors du clic
 local function AddDropdownEntry(text, onClick)
     local info = UIDropDownMenu_CreateInfo()
     info.text = text
@@ -32,113 +28,36 @@ local function AddDropdownEntry(text, onClick)
     UIDropDownMenu_AddButton(info)
 end
 
--- ===================== 🧠 STATE LOGIC ====================== --
+--- Applique un changement de sélection dans un dropdown.
+-- Met à jour l'état, réinitialise d'autres champs si besoin,
+-- met à jour les textes des dropdowns, et appelle les callbacks associés.
+-- @param opts table - Paramètres : key, value, dropdown, reset, resetFrames, refreshGallery, after
+local function ApplyDropdownChange(opts)
+    StateAccess.Set(opts.key, opts.value)
+    SetDropdownText(opts.dropdown, opts.value)
 
-local function ApplyStateKey(key, value)
-    State[key] = value
-end
-
-local function ResetStateKeys(resetKeys)
-    if not resetKeys then return end
-    for _, key in ipairs(resetKeys) do
-        State[key] = nil
-    end
-end
-
-local function UpdateDropdownTexts(dropdown, value, resetFrames)
-    UIDropDownMenu_SetText(dropdown, value)
-    if resetFrames then
-        for key, frame in pairs(resetFrames) do
-            UIDropDownMenu_SetText(frame, "")
+    if opts.reset then
+        for _, key in ipairs(opts.reset) do
+            StateAccess.Set(key, nil)
+            if opts.resetFrames and opts.resetFrames[key] then
+                SetDropdownText(opts.resetFrames[key], "")
+            end
         end
     end
+
+    if opts.refreshGallery then Gallery.UpdateGallery() end
+    if opts.after then opts.after() end
 end
 
-local function RefreshUI(opts)
-    if opts.refreshGallery then
-        Gallery.UpdateGallery()
-    end
-    if opts.after then
-        opts.after()
-    end
-end
-
-local function ApplyStateChange(opts)
-    ApplyStateKey(opts.key, opts.value)
-    ResetStateKeys(opts.reset)
-    UpdateDropdownTexts(opts.dropdown, opts.value, opts.resetFrames)
-    RefreshUI(opts)
-end
-
--- ===================== 🎛 CONFIG + DROPDOWNS ====================== --
-
-local DropdownConfigs = {
-    playerControlled = {
-        getSource = function()
-            local entries = {}
-            local playerName = UnitName("player")
-            local currentPet = UnitName("pet")
-            local pets = CustomPortraitDB[playerName] and CustomPortraitDB[playerName].pets or {}
-
-            table.insert(entries, {
-                label = playerName .. " (Joueur)",
-                value = "Joueur"
-            })
-
-            local added = {}
-            for petName in pairs(pets) do
-                table.insert(entries, {
-                    label = (currentPet and petName == currentPet) and "|cff00ff00" .. petName .. "|r" or petName,
-                    value = petName
-                })
-                added[petName] = true
-            end
-
-            if currentPet and not added[currentPet] then
-                table.insert(entries, {
-                    label = "|cff00ff00" .. currentPet .. "|r",
-                    value = currentPet
-                })
-            end
-
-            return entries
-        end,
-        stateKey = "playerControlled",
-        refreshGallery = false
-    },
-    gender = {
-        getSource = function() return Const.GENDERS end,
-        stateKey = "gender",
-        reset = { "race", "class" },
-        resetFrames = {
-            race = RaceDropDown,
-            class = ClassDropDown
-        },
-        refreshGallery = true
-    },
-    race = {
-        getSource = GetAvailableRaces,
-        stateKey = "race",
-        reset = { "class" },
-        resetFrames = { class = ClassDropDown },
-        refreshGallery = true,
-        after = function()
-            UIDropDownMenu_Initialize(ClassDropDown, function(frame)
-                M.InitDropdown("class", frame)
-            end)
-        end
-    },
-    class = {
-        getSource = GetAvailableClasses,
-        stateKey = "class",
-        refreshGallery = true
-    }
-}
-
+--- Génère un handler `onClick` pour une entrée de dropdown.
+-- Gère automatiquement les objets {label, value} ou des strings simples.
+-- @param entry string|table - L'entrée (ou sa structure)
+-- @param opts table - Les options de configuration liées à ce dropdown
+-- @return function - Fonction à appeler lors du clic
 local function CreateDropdownHandler(entry, opts)
     local value = type(entry) == "table" and entry.value or entry
     return function()
-        ApplyStateChange({
+        ApplyDropdownChange {
             key = opts.stateKey,
             value = value,
             dropdown = opts.dropdown,
@@ -146,10 +65,13 @@ local function CreateDropdownHandler(entry, opts)
             resetFrames = opts.resetFrames,
             refreshGallery = opts.refreshGallery,
             after = opts.after
-        })
+        }
     end
 end
 
+--- Remplit un dropdown avec une liste d'entrées (strings ou objets {label, value}).
+-- @param entries table - La liste d'options à afficher
+-- @param opts table - La configuration étendue du dropdown
 local function PopulateDropdown(entries, opts)
     UIDropDownMenu_ClearAll(opts.dropdown)
     for _, entry in ipairs(entries) do
@@ -158,23 +80,32 @@ local function PopulateDropdown(entries, opts)
     end
 end
 
+--- Prépare une configuration complète de dropdown à partir de sa clé.
+-- Inclut la récupération des entrées dynamiques via getSource(State)
+-- @param key string - Clé du dropdown (ex: "gender", "race", etc.)
+-- @param dropdownFrame Frame - Frame UI du dropdown
+-- @return table|nil - Configuration enrichie
 local function PrepareConfig(key, dropdownFrame)
-    local base = DropdownConfigs[key]
+    local base = Configs[key]
     if not base then return nil end
     local config = CopyTable(base)
     config.dropdown = dropdownFrame
-    config.entries = config.getSource()
+    config.entries = config.getSource(TrueRP.PortraitSelector.State)
     return config
 end
 
+--- Initialise un dropdown donné selon sa configuration.
+-- À appeler depuis `UIDropDownMenu_Initialize`.
+-- @param key string - Clé du dropdown ("gender", "race", "class", "playerControlled")
+-- @param dropdownFrame Frame - Le frame correspondant
 function M.InitDropdown(key, dropdownFrame)
     local config = PrepareConfig(key, dropdownFrame)
-    if not config then return end
-    PopulateDropdown(config.entries, config)
+    if config then
+        PopulateDropdown(config.entries, config)
+    end
 end
 
--- ===================== 🔗 EXPORT ====================== --
-
+-- 🔗 Exporte le module dans l'espace global TrueRP
 TrueRP = TrueRP or {}
 TrueRP.PortraitSelector = TrueRP.PortraitSelector or {}
 TrueRP.PortraitSelector.Dropdowns = M
