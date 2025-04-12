@@ -47,7 +47,7 @@ function PortraitSelector_OnLoad(self)
         ["Tauren"] = "Tauren",
         ["Gnome"] = "Gnome",
         ["Troll"] = "Troll",
-        ["Undead"] = "Mort-vivant",
+        ["Undead"] = "Réprouvé",
         ["Dwarf"] = "Nain"
     }
 
