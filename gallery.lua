@@ -5,19 +5,20 @@ local M = {}
 local State = TrueRP.PortraitSelector.State
 
 local numPortraits = 100
-local portraitsPerRow = 5
-local rowHeight = 70
+local portraitsPerRow = 4
+local rowHeight = 110
 local maxRow = math.ceil(numPortraits / portraitsPerRow)
+local portraitButtonSize = 100
 
 function M.InitSelector()
     for i = 1, numPortraits do
         local btn = CreateFrame("Button", "PortraitButton" .. i, PortraitSelectorGallery)
         btn.texture = btn:CreateTexture(nil, "BACKGROUND")
-        btn:SetSize(64, 64)
+        btn:SetSize(portraitButtonSize, portraitButtonSize)
 
         local row = math.floor((i - 1) / portraitsPerRow)
         local col = (i - 1) % portraitsPerRow
-        btn:SetPoint("TOPLEFT", PortraitSelectorGallery, "TOPLEFT", 10 + col * 70, -10 - row * rowHeight)
+        btn:SetPoint("TOPLEFT", PortraitSelectorGallery, "TOPLEFT", 10 + col * 110, -10 - row * rowHeight)
 
         btn.texture:SetAllPoints()
         btn:EnableMouse(true)
