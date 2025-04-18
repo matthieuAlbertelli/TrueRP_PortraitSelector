@@ -3,29 +3,29 @@
 local M = {}
 
 local State = TrueRP.PortraitSelector.State
+local DB = TrueRP_DBModule
 
 function M.Save()
     if not State.portrait then return end
 
     local playerKey = UnitName("player")
-    CustomPortraitDB[playerKey] = CustomPortraitDB[playerKey] or {}
 
+    print("State:" .. State.target)
     if State.target == "Joueur" then
-        CustomPortraitDB[playerKey].portrait = State.portrait
-    else
-        local petName = State.target
-        CustomPortraitDB[playerKey].pets = CustomPortraitDB[playerKey].pets or {}
-        CustomPortraitDB[playerKey].pets[petName] = State.portrait
+        DB.SetPortraitInDB(playerKey, State.portrait)
+    else -- C'est le portrait du familier qui est modifié
+        DB.SetPetPortraitInDB(playerKey, State.target, State.portrait)
     end
 
-    local message = "UPDATE:" .. playerKey
-    if GetNumRaidMembers() > 0 then
-        SendAddonMessage("TRUERP_PORTRAIT", message, "RAID")
-    elseif GetNumPartyMembers() > 0 then
-        SendAddonMessage("TRUERP_PORTRAIT", message, "PARTY")
-    else
-        SendAddonMessage("TRUERP_PORTRAIT", message, "WHISPER", UnitName("player"))
-    end
+    -- Optionnel : broadcast addon message (à réactiver si nécessaire)
+    -- local message = "UPDATE:" .. playerKey
+    -- if GetNumRaidMembers() > 0 then
+    --     SendAddonMessage("TRUERP_PORTRAIT", message, "RAID")
+    -- elseif GetNumPartyMembers() > 0 then
+    --     SendAddonMessage("TRUERP_PORTRAIT", message, "PARTY")
+    -- else
+    --     SendAddonMessage("TRUERP_PORTRAIT", message, "WHISPER", UnitName("player"))
+    -- end
 end
 
 TrueRP = TrueRP or {}

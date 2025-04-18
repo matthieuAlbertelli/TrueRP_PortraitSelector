@@ -1,4 +1,4 @@
-CustomPortraitDB = CustomPortraitDB or {}
+TrueRP_DB = TrueRP_DB or {}
 
 -- Aliases de modules
 local Dropdowns = TrueRP.PortraitSelector.Dropdowns

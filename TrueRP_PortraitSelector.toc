@@ -1,9 +1,10 @@
 ## Interface: 30300
 ## Title: TrueRP Portrait Selector
-## Notes: Sélecteur de portraits révisé et fonctionnel
-## Author: ChatGPT
+## Notes: Sélecteur de portraits TrueRP
+## Author: Matthieu Albertelli
 ## Version: 1.0
-## SavedVariables: CustomPortraitDB
+## RequiredDeps: TrueRP_DB
+## SavedVariables: TrueRP_DB
 
 constants.lua
 state.lua

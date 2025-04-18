@@ -30,12 +30,12 @@ TrueRP.PortraitSelector.DropdownConfig = {
 
     --- Dropdown : Entité contrôlée par le joueur (joueur ou familier)
     playerControlled = {
-        stateKey = "playerControlled",
+        stateKey = "target",
         getSource = function(state)
             local entries = {}
             local playerName = UnitName("player")
             local currentPet = UnitName("pet")
-            local pets = CustomPortraitDB[playerName] and CustomPortraitDB[playerName].pets or {}
+            local pets = TrueRP_DB[playerName] and TrueRP_DB[playerName].pets or {}
 
             table.insert(entries, MakeEntry(playerName .. " (Joueur)", "Joueur"))
 

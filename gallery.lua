@@ -40,7 +40,7 @@ function M.UpdateGallery()
         return
     end
 
-    local basePath = "Interface\\AddOns\\TrueRP_PortraitSelector\\portraits\\" ..
+    local basePath = "Interface\\AddOns\\TrueRP_DB\\portraits\\" ..
         State.gender:lower():gsub(" ", "_") .. "\\" ..
         State.race:lower():gsub(" ", "_") .. "\\" ..
         State.class:lower():gsub(" ", "_")
