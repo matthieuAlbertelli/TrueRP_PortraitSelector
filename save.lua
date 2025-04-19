@@ -17,6 +17,7 @@ function M.Save()
         DB.SetPetPortraitInDB(playerKey, State.target, State.portrait)
     end
 
+    ReloadUI()
     -- Optionnel : broadcast addon message (à réactiver si nécessaire)
     -- local message = "UPDATE:" .. playerKey
     -- if GetNumRaidMembers() > 0 then
