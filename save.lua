@@ -10,7 +10,7 @@ function M.Save()
 
     local playerKey = UnitName("player")
 
-    print("State:" .. State.target)
+    -- print("State:" .. State.target)
     if State.target == "Joueur" then
         DB.SetPortraitInDB(playerKey, State.portrait)
     else -- C'est le portrait du familier qui est modifié
